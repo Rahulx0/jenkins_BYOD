@@ -57,5 +57,6 @@ pipeline {
             echo 'Build failed! Some tests did not pass.'
             }
 
+            }
         }
 
