@@ -55,8 +55,7 @@ pipeline {
         }
         failure {
             echo 'Build failed! Some tests did not pass.'
-        }
-    }cd /home/kratos/IdeaProjects/BYOD_test_automation
+            }
 
-}
+        }
 
