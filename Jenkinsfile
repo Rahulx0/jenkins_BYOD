@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     environment {
-        RUNNER_IMAGE = 'csv302lpu/grade-runner:v1'
+        // Use minimal Alpine and install Java+Maven at runtime
+        RUNNER_IMAGE = 'alpine:latest'
         REPORT_DIR = 'target/surefire-reports'
     }
 
@@ -25,7 +26,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 script {
-                    echo "Running tests in container from image: ${RUNNER_IMAGE}"
+                    echo "Running tests in container from image: ${RUNNER_IMAGE} (will install OpenJDK and Maven)"
                     sh '''
                         mkdir -p "${WORKSPACE}/${REPORT_DIR}"
                         docker run --rm \
@@ -33,7 +34,7 @@ pipeline {
                             -v "${WORKSPACE}/${REPORT_DIR}:/app/target/surefire-reports" \
                             -w /app \
                             ${RUNNER_IMAGE} \
-                            mvn test
+                            sh -c "apk add --no-cache openjdk17-jdk maven && mvn -B test"
                     '''
                 }
             }
@@ -55,8 +56,7 @@ pipeline {
         }
         failure {
             echo 'Build failed! Some tests did not pass.'
-            }
-
-            }
         }
+    }
+}
 
